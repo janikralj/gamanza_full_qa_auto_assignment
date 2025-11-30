@@ -13,16 +13,16 @@ export class PostPage {
 
     async assertPageTitle (title: string){
         const pageTitle = await this.page.title();
-        expect(pageTitle).toContain(title);
+        expect(pageTitle, `Page title should contain "${title}", but it was "${pageTitle}"`).toContain(title);
     }
 
     async assertPostTitle (title: string){
-        await expect(this.postTitleLocator).toBeVisible();
-        await expect(this.postTitleLocator).toHaveText(title);
+        await expect(this.postTitleLocator, `Post with title ${title}, is not visible`).toBeVisible();
+        await expect(this.postTitleLocator, `Post with title ${title}, does not have proper text`).toHaveText(title);
     }
 
     async assertPostBodyDesc(body: string){
-        await expect(this.postBodyLocator).toBeVisible();
-        await expect(this.postBodyLocator).toContainText(body);
+        await expect(this.postBodyLocator, `Post with body ${body}, is not visible`).toBeVisible();
+        await expect(this.postBodyLocator, `Post with body ${body}, does not have proper text`).toContainText(body);
     }
 }
