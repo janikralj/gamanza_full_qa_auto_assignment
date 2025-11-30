@@ -14,13 +14,13 @@ Steps to check:
 - go to **http://localhost:8080** and setup wordpress, create admin user.
 - login with created admin user and manually add new post with predefined title and description.
 - after post is published execute creating mysqldump for creating wordpress.sql (which will be used for build) after manually creating post.
-'''
+
 docker exec qa-db sh -c \
   "mysqldump -u root -prootpassword wordpress" > db/wordpress.sql
-'''
 
 4. Running whole project with docker compose up (wordpress, mysql, and playwright)
 - docker-compose up --build --abort-on-container-exit --exit-code-from tests
+  
 This does not pass, getting error:
 '''
 Error: page.goto: net::ERR_CONNECTION_REFUSED at http://wordpress/
@@ -30,7 +30,7 @@ qa-playwright-tests  |       - navigating to "http://wordpress/", waiting until 
 
 
 
-BUT if we can run tests that we first make wordpress accessable with
+BUT we can run tests that we first make wordpress accessable with
 - docker-compose up db wordpress
 and than run tests with
 - npx playwright test
