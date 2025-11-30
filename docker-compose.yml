@@ -1,0 +1,64 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: qa-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+      # This SQL dump seeds the DB on first startup
+      - ./db/wordpress.sql:/docker-entrypoint-initdb.d/wordpress.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    # The default port for MySQL is 3306, exposed for potential local access
+    ports:
+      - "3306:3306"
+
+  wordpress:
+    image: wordpress:latest
+    container_name: qa-wordpress
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      # http://localhost:8080
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppassword
+    healthcheck:
+      # basic check that the app responds; good enough for our tests
+      test: ["CMD", "curl", "-f", "http://localhost/wp-login.php"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: qa-playwright-tests
+    depends_on:
+      wordpress:
+        condition: service_started
+    environment:
+      # internal URL inside Docker network – port 80 is default
+      BASE_URL: http://wordpress
+    command: ["npm", "test"]
+
+volumes:
+  db_data:
