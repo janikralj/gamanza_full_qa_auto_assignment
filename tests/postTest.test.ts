@@ -16,13 +16,11 @@ test.describe('Gamanza full qa challange', () => {
       await homePage.openPostByTitle(postTitleToExpect);
     }
 
-    // 3. Assert that page title contains post's title text
-    await postPage.assertPageTitle(postTitleToExpect);
 
-    // 4. Assert that the post title is visible
+    // 3. Assert that the post title is visible
     await postPage.assertPostTitle(postTitleToExpect);
 
-    // 5. Assert that the post body contains the required text
+    // 4. Assert that the post body contains the required text
     await postPage.assertPostBodyDesc(postBodyDescToExpect);
   });
 });

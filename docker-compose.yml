@@ -57,7 +57,8 @@ services:
         condition: service_started
     environment:
       # internal URL inside Docker network – port 80 is default
-      BASE_URL: http://wordpress
+      BASE_URL: http://host.docker.internal:8080
+      # BASE_URL: http://wordpress/
     command: ["npm", "test"]
 
 volumes:

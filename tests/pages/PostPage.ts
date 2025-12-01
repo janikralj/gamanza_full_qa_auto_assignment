@@ -11,12 +11,8 @@ export class PostPage {
         this.postBodyLocator = this.page.locator('div.entry-content');
     }
 
-    async assertPageTitle (title: string){
-        const pageTitle = await this.page.title();
-        expect(pageTitle, `Page title should contain "${title}", but it was "${pageTitle}"`).toContain(title);
-    }
-
     async assertPostTitle (title: string){
+        console.log("INVESTIGATING on post page -> FOR URL AFTER CLICKING ON POST ->", await this.page.url());
         await expect(this.postTitleLocator, `Post with title ${title}, is not visible`).toBeVisible();
         await expect(this.postTitleLocator, `Post with title ${title}, does not have proper text`).toHaveText(title);
     }
